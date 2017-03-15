@@ -14,7 +14,8 @@ public class Main {
 
         try {
 
-        	DummyClient sampleClient1 = new DummyClient(broker, clientId + '1');
+        	MQTTSwitch sampleClient1 = new MQTTSwitch(broker, clientId + '1');
+        	sampleClient1.init();
         	DummyClient sampleClient2 = new DummyClient(broker, clientId + '2');
         	
             MqttMessage message = new MqttMessage(content.getBytes());
@@ -22,7 +23,7 @@ public class Main {
             message.setRetained(false);
  
             sampleClient2.subscribe(topic, qos);
-            sampleClient1.publish(topic, message);
+            sampleClient1.turnOn();
             
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());

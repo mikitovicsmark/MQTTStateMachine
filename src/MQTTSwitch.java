@@ -5,21 +5,20 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.yakindu.scr.RuntimeService;
+import org.yakindu.scr.TimerService;
 import org.yakindu.scr.switchsm.SwitchSMStatemachine;
+import org.yakindu.scr.switchsm.ISwitchSMStatemachine.SCIPublishOperationCallback;
 
-public class MQTTSwitch extends SwitchSMStatemachine implements MqttCallback{
+public class MQTTSwitch implements MqttCallback{
+	static SwitchSMStatemachine statemachine;
 	MqttClient myClient;
 	MqttConnectOptions connOpts;
-	
-	public enum State {
-		ON, OFF
-	}
-	
-	State innerState;
+	static boolean started = false;
 	
 	public MQTTSwitch(String broker, String clientId) {
-		innerState = State.OFF;
 		 try {
+			statemachine = new SwitchSMStatemachine();
 			myClient = new MqttClient(broker, clientId);
 			myClient.setCallback(this);
 			connOpts = new MqttConnectOptions();
@@ -31,6 +30,50 @@ public class MQTTSwitch extends SwitchSMStatemachine implements MqttCallback{
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void init() {
+		if (!started) {
+			statemachine.setTimer(new TimerService());
+			statemachine.getSCIPublish().setSCIPublishOperationCallback(new SCIPublishOperationCallback() {
+				public void onMessage() {
+					String topic = "DummyTopic";
+					String content =  "Turned On!";
+					MqttMessage message = new MqttMessage(content.getBytes());
+					try {
+						myClient.publish(topic, message);
+					} catch (MqttPersistenceException e) {
+						e.printStackTrace();
+					} catch (MqttException e) {
+						e.printStackTrace();
+					}
+					
+				}
+
+				public void offMessage() {
+					String topic = "DummyTopic";
+					String content =  "Turned Off!";
+					MqttMessage message = new MqttMessage(content.getBytes());
+					try {
+						myClient.publish(topic, message);
+					} catch (MqttPersistenceException e) {
+						e.printStackTrace();
+					} catch (MqttException e) {
+						e.printStackTrace();
+					}
+					
+				}
+			});
+			statemachine.init();
+			statemachine.enter();
+			RuntimeService.getInstance().registerStatemachine(statemachine, 100);
+			started = true;
+		}
+	}
+
+	public void turnOn() {
+		statemachine.getSCIControls().raiseTurnOn();
+		statemachine.runCycle();
 	}
 	
 	public void connectionLost(Throwable arg0) {
@@ -45,7 +88,6 @@ public class MQTTSwitch extends SwitchSMStatemachine implements MqttCallback{
 
 	public void messageArrived(String topic, MqttMessage msg) throws Exception {
 		System.out.println("Got message: Topic: " + topic + "\n\tMessage: " + new String(msg.getPayload()));
-		innerState = State.ON;
 	}
 
 	public void subscribe(String topic, int qos) throws MqttException {
