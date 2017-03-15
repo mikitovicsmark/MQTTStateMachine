@@ -1,4 +1,4 @@
-bin/
-.project
-.classpath
-.settings/
+
+/target/
+/src-gen
+/bin

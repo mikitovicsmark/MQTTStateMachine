@@ -1,0 +1,20 @@
+GeneratorModel for yakindu::java {
+
+	statechart Light {
+
+		feature Outlet {
+			targetProject = "MQTTExample"
+			targetFolder = "src-gen"
+			libraryTargetFolder = "src"
+		}
+	}
+
+	statechart Switch {
+
+		feature Outlet {
+			targetProject = "MQTTExample"
+			targetFolder = "src-gen"
+			libraryTargetFolder = "src"
+		}
+	}
+}
