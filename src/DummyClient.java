@@ -60,6 +60,5 @@ public class DummyClient implements MqttCallback {
 
 	public void disconnect() throws MqttException {
 		myClient.disconnect();
-		
 	}
 }
