@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.yakindu.scr.RuntimeService;
 import org.yakindu.scr.light.LightStatemachine;
 
@@ -16,10 +17,10 @@ public class MQTTLight extends LightStatemachine implements MqttCallback{
 	
 	State innerState;
 	
-	public MQTTLight(String broker, String clientId) {
+	public MQTTLight(String broker, String clientId, MemoryPersistence persistence) {
 		 try {
 			statemachine = new LightStatemachine();
-			myClient = new MqttClient(broker, clientId);
+			myClient = new MqttClient(broker, clientId, persistence);
 			myClient.setCallback(this);
 			connOpts = new MqttConnectOptions();
 		

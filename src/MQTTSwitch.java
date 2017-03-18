@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.yakindu.scr.RuntimeService;
 import org.yakindu.scr.TimerService;
 import org.yakindu.scr.switchsm.SwitchSMStatemachine;
@@ -16,10 +17,10 @@ public class MQTTSwitch implements MqttCallback{
 	MqttConnectOptions connOpts;
 	boolean started = false;
 	
-	public MQTTSwitch(String broker, String clientId) {
+	public MQTTSwitch(String broker, String clientId, MemoryPersistence persistence) {
 		 try {
 			statemachine = new SwitchSMStatemachine();
-			myClient = new MqttClient(broker, clientId);
+			myClient = new MqttClient(broker, clientId, persistence);
 			myClient.setCallback(this);
 			connOpts = new MqttConnectOptions();
 			

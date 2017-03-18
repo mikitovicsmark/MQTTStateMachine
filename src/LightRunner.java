@@ -1,30 +1,21 @@
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class Main {
+public class LightRunner {
 	
     public static void main(String[] args) throws InterruptedException {
 
         String topic        = "DummyTopic";
-        String content      = "Turn on!";
         int qos             = 2;
         String broker       = "tcp://localhost:1883";
         String clientId     = "DummyClient";
-        //MemoryPersistence persistence = new MemoryPersistence();
+        MemoryPersistence persistence = new MemoryPersistence();
 
         try {
 
-        	MQTTSwitch sampleClient1 = new MQTTSwitch(broker, clientId + '1');
-        	sampleClient1.init();
-        	MQTTLight sampleClient2 = new MQTTLight(broker, clientId + '2');
+        	MQTTLight sampleClient2 = new MQTTLight(broker, clientId + '2', persistence);
         	sampleClient2.init();
-        	
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setQos(qos);
-            message.setRetained(false);
- 
             sampleClient2.subscribe(topic, qos);
-            sampleClient1.turnOn();
             
         } catch(MqttException me) {
             System.out.println("reason "+me.getReasonCode());
