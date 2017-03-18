@@ -8,13 +8,13 @@ import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.yakindu.scr.RuntimeService;
 import org.yakindu.scr.TimerService;
 import org.yakindu.scr.switchsm.SwitchSMStatemachine;
-import org.yakindu.scr.switchsm.ISwitchSMStatemachine.SCIPublishOperationCallback;
+import org.yakindu.scr.switchsm.ISwitchSMStatemachine.SCIPublishListener;
 
 public class MQTTSwitch implements MqttCallback{
-	static SwitchSMStatemachine statemachine;
+	SwitchSMStatemachine statemachine;
 	MqttClient myClient;
 	MqttConnectOptions connOpts;
-	static boolean started = false;
+	boolean started = false;
 	
 	public MQTTSwitch(String broker, String clientId) {
 		 try {
@@ -22,7 +22,7 @@ public class MQTTSwitch implements MqttCallback{
 			myClient = new MqttClient(broker, clientId);
 			myClient.setCallback(this);
 			connOpts = new MqttConnectOptions();
-		
+			
 		    connOpts.setCleanSession(true);
 		    connOpts.setKeepAliveInterval(30);
 		    
@@ -35,10 +35,11 @@ public class MQTTSwitch implements MqttCallback{
 	public void init() {
 		if (!started) {
 			statemachine.setTimer(new TimerService());
-			statemachine.getSCIPublish().setSCIPublishOperationCallback(new SCIPublishOperationCallback() {
-				public void onMessage() {
+			statemachine.getSCIPublish().getListeners().add(new SCIPublishListener() {
+
+				public void onOnTurnOnRaised() {
 					String topic = "DummyTopic";
-					String content =  "Turned On!";
+					String content = "Turned On!";
 					MqttMessage message = new MqttMessage(content.getBytes());
 					try {
 						myClient.publish(topic, message);
@@ -47,10 +48,9 @@ public class MQTTSwitch implements MqttCallback{
 					} catch (MqttException e) {
 						e.printStackTrace();
 					}
-					
 				}
 
-				public void offMessage() {
+				public void onOnTurnOffRaised() {
 					String topic = "DummyTopic";
 					String content =  "Turned Off!";
 					MqttMessage message = new MqttMessage(content.getBytes());
@@ -60,9 +60,9 @@ public class MQTTSwitch implements MqttCallback{
 						e.printStackTrace();
 					} catch (MqttException e) {
 						e.printStackTrace();
-					}
-					
+					}				
 				}
+				
 			});
 			statemachine.init();
 			statemachine.enter();
@@ -78,12 +78,10 @@ public class MQTTSwitch implements MqttCallback{
 	
 	public void connectionLost(Throwable arg0) {
 		System.out.println("Connection lost.");
-		
 	}
 
 	public void deliveryComplete(IMqttDeliveryToken arg0) {
 		System.out.println("Delivery complete.");
-		
 	}
 
 	public void messageArrived(String topic, MqttMessage msg) throws Exception {
@@ -92,7 +90,6 @@ public class MQTTSwitch implements MqttCallback{
 
 	public void subscribe(String topic, int qos) throws MqttException {
 		myClient.subscribe(topic, qos);
-		
 	}
 
 	public void publish(String topic, MqttMessage message) throws MqttPersistenceException, MqttException {

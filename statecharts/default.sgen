@@ -8,7 +8,6 @@ GeneratorModel for yakindu::java {
 			libraryTargetFolder = "src"
 		}
 		feature GeneralFeatures{
-			TimerService = true
 			RuntimeService = true
 		}
 	}
@@ -23,6 +22,7 @@ GeneratorModel for yakindu::java {
 		feature GeneralFeatures{
 			TimerService = true
 			RuntimeService = true
+			InterfaceObserverSupport = true
 		}
 	}
 }

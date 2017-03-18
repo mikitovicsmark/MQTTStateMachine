@@ -16,7 +16,8 @@ public class Main {
 
         	MQTTSwitch sampleClient1 = new MQTTSwitch(broker, clientId + '1');
         	sampleClient1.init();
-        	DummyClient sampleClient2 = new DummyClient(broker, clientId + '2');
+        	MQTTLight sampleClient2 = new MQTTLight(broker, clientId + '2');
+        	sampleClient2.init();
         	
             MqttMessage message = new MqttMessage(content.getBytes());
             message.setQos(qos);

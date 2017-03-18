@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:sgraph="http://www.yakindu.org/sct/sgraph/2.0.0">
-  <sgraph:Statechart xmi:id="_qEfncAgrEeeS1610FRjOYw" specification="interface Publish:&#xA;operation onMessage()&#xA;operation offMessage()&#xA;&#xA;interface Controls:&#xA;in event turnOn" name="Switch">
+  <sgraph:Statechart xmi:id="_qEfncAgrEeeS1610FRjOYw" specification="interface Publish:&#xA;out event onTurnOn&#xA;out event onTurnOff&#xA;&#xA;interface Controls:&#xA;in event turnOn" name="Switch">
     <regions xmi:id="_qE2z0AgrEeeS1610FRjOYw" name="main region">
       <vertices xsi:type="sgraph:Entry" xmi:id="_qGQiAAgrEeeS1610FRjOYw">
         <outgoingTransitions xmi:id="_qGqxsAgrEeeS1610FRjOYw" target="_qGS-QAgrEeeS1610FRjOYw"/>
       </vertices>
       <vertices xsi:type="sgraph:State" xmi:id="_qGS-QAgrEeeS1610FRjOYw" name="Off" incomingTransitions="_wpcswAgsEeeS1610FRjOYw _qGqxsAgrEeeS1610FRjOYw">
-        <outgoingTransitions xmi:id="_txWeQAgsEeeS1610FRjOYw" specification="Controls.turnOn / Publish.onMessage()" target="_qyfgcAgsEeeS1610FRjOYw"/>
+        <outgoingTransitions xmi:id="_txWeQAgsEeeS1610FRjOYw" specification="Controls.turnOn / raise Publish.onTurnOn" target="_qyfgcAgsEeeS1610FRjOYw"/>
       </vertices>
       <vertices xsi:type="sgraph:State" xmi:id="_qyfgcAgsEeeS1610FRjOYw" name="On" incomingTransitions="_txWeQAgsEeeS1610FRjOYw">
-        <outgoingTransitions xmi:id="_wpcswAgsEeeS1610FRjOYw" specification="after 1 s / Publish.offMessage()" target="_qGS-QAgrEeeS1610FRjOYw"/>
+        <outgoingTransitions xmi:id="_wpcswAgsEeeS1610FRjOYw" specification="after 1 s / raise Publish.onTurnOff" target="_qGS-QAgrEeeS1610FRjOYw"/>
       </vertices>
     </regions>
   </sgraph:Statechart>
