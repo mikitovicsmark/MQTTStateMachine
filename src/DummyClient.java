@@ -11,14 +11,7 @@ public class DummyClient implements MqttCallback {
 	MqttClient myClient;
 	MqttConnectOptions connOpts;
 	
-	public enum State {
-		ON, OFF
-	}
-	
-	State innerState;
-	
 	public DummyClient(String broker, String clientId) {
-		innerState = State.OFF;
 		 try {
 			myClient = new MqttClient(broker, clientId);
 			myClient.setCallback(this);
@@ -45,7 +38,6 @@ public class DummyClient implements MqttCallback {
 
 	public void messageArrived(String topic, MqttMessage msg) throws Exception {
 		System.out.println("Got message: Topic: " + topic + "\n\tMessage: " + new String(msg.getPayload()));
-		innerState = State.ON;
 	}
 
 	public void subscribe(String topic, int qos) throws MqttException {
